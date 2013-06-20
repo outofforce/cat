@@ -12,7 +12,6 @@
 		"mongodb": ">= 0.9.8",
 		"express-partials": "*",
 		"connect-flash": "*",
-		"ldapjs": "*",
-
+		"ldapjs": "*"
   }
 }
