@@ -8,6 +8,9 @@
 				var tfile = $("#uploadfilename").html();
 				window.opener.$("#uploadimagename").html("<img  src='"+tfile+"' />");
 				window.opener.$("#uploadimagenameInput").val(tfile);
+				window.opener.$("div[group=1234]").attr("style","");
+
+
 				window.close();
 		});
 

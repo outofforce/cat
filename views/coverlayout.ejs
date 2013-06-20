@@ -63,7 +63,7 @@
   </head>
   <body>
   
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
 				<div class="container-fluid">
 					<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -71,10 +71,9 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-          <a class="brand" href="/">CAT</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-							<li class="active"><a href="/reg">注册</a></li>
+							<li class="active"><a href="/"><b>CAT</b></a></li>
             </ul>
           </div>
         </div>
@@ -89,7 +88,20 @@
 			<h4>cat 是一个项目管理的社交平台<br>
 			在cat上我们可以分享项目经验，共享项目资料，一起讨论需求和bug <br>
 			让我们来玩玩工作</h4>
+<% if (success) { %>
+<div class="alert alert-success">
+	<%= success %>
+</div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-error">
+	<%= error %>
+</div>
+<% } %>
+
+
 		</div>
+
 	<div class="span4">
 
 		<%- body %>

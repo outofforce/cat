@@ -16,13 +16,11 @@
 
 
 		<style type="text/css">
-			.topbarbg {
-				background: linear-gradient(45deg, #053031 0%, #6D3353 100%) repeat scroll 0 0 transparent;
-				color: #FFFFFF;
-				padding: 0px 0;
-				position: relative;
-			}
 
+			.sidebar-nav {
+				padding: 9px 0;
+			}
+ 
 		</style>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -32,11 +30,12 @@
 
   </head>
 
-  <body data-spy="scroll" data-target=".bs-docs-sidebar">
+	<!-- <body data-spy="scroll" data-target=".bs-docs-sidebar"> -->
+  <body >
 
     <!-- Navbar
     ================================================== -->
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -44,14 +43,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="/">CAT</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="">
-                <a href="/"></a>
-              </li>
-              <li class="active"><a href="/reg">注册</a></li>
-              <li><a href="/logout">退出</a></li>
+							<li class="active"><a href="/"><b>CAT</b></a></li>
+							<li><a href="/logout">退出 <span></span> [<%= user.name %>]</a></li>
             </ul>
           </div>
         </div>
@@ -60,22 +55,35 @@
 
 <!-- Subhead
 ================================================== -->
-<!-- <header class="jumbotron subhead" id="overview"> -->
+<!-- <header class="jumbotron subhead" id="overview"> 
 <header class="topbarbg subhead" id="overview">
   <div class="container">
 		<h2><%= user.name %> 欢迎光临</h2>
 		<p class="lead"><small>cat 是一个项目讨论社交平台</small></p>
   </div>
-</header>
+	</header> -->
 
- <div class="container">
+ <div class="container" style="padding-top:20px;">
 	<div class="row">
-		<div class="span3 bs-docs-sidebar">
+		<div class="span3">
 			<%- partial('tleftbar',{mywatches:mywatches}) %>
 		</div>
 		<div class="span7">
 			<%- body %>
 		</div>
+		<div class="span2">
+<% if (success) { %>
+<div class="alert alert-success">
+	<%= success %>
+</div>
+<% } %>
+<% if (error) { %>
+<div class="alert alert-error">
+	<%= error %>
+</div>
+<% } %>
+
+			</div>
 	</div>
 </div>
 
@@ -107,7 +115,7 @@
 	}
 
 	function uploadsomething(obj) {
-		window.open("/file-upload","附件上传","width=400,height=400,top=200,left=400"); 
+		window.open("/file-upload","附件上传","width=400,height=400,top=200,left=400,toolbar=no"); 
 
 	}
 

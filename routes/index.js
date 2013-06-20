@@ -5,7 +5,7 @@ var Project = require('../models/project.js');
 var Watch= require('../models/watch.js');
 var fs= require('fs');
 var url = require('url');
-
+var ldap = require('ldapjs');
 
 module.exports = function(app) {
 
@@ -21,6 +21,7 @@ module.exports = function(app) {
 
 	});
 
+	app.get('/m/:mtype', checkLogin);
 	app.get('/m/:mtype', function(req, res) {
 
 		 var tmtype = req.params.mtype;
@@ -78,13 +79,6 @@ module.exports = function(app) {
 	
 	});
 
-  app.get('/new_project', checkLogin);
-	app.get('/new_project', function(req, res) {
-		res.render('index', {
-			title: '新建项目',
-			from:'new_project',
-		});
-	});
 
   app.post('/new_project', checkLogin);
   app.post('/new_project', function(req, res) {
@@ -102,16 +96,16 @@ module.exports = function(app) {
         err = '项目已经存在';
       if (err) {
         req.flash('error', err);
-        return res.redirect('/new_project');
+        return res.redirect('/m/tnew_project');
       }
   
       newProject.save(function(err) {
         if (err) {
           req.flash('error', err);
-          return res.redirect('/new_project');
+          return res.redirect('/m/tnew_project');
         }
         req.flash('success', '新建成功');
-        res.redirect('/project');
+        res.redirect('/m/tproject');
       });
     });
   });
@@ -119,15 +113,15 @@ module.exports = function(app) {
 
   //app.get('/reg', checkNotLogin);
 	app.get('/reg', function(req, res) {
+
 		res.render('reg', {
 			title: '用户注册',
 			layout: 'coverlayout'
 		});
 	});
 
-  app.post('/reg', checkNotLogin);
   app.post('/reg', function(req, res) {
- 
+    req.session.user = null;
     if (req.body['password-repeat'] != req.body['password']) {
       req.flash('error', '两次输入的口令不一致');
       return res.redirect('/reg');
@@ -171,6 +165,68 @@ module.exports = function(app) {
     });
   });
   
+
+  app.post('/loginldap', checkNotLogin);
+  app.post('/loginldap', function(req, res) {
+		req.session.user = null;
+
+    var ldappassword = req.body.password;
+
+		if (ldappassword == "") {
+			req.flash('error', '密码非空');
+			return res.redirect('/');
+		}
+		var ldapusername='ailk\\'+req.body.username;
+
+		console.log(ldapusername+'  + + ',ldappassword);
+		var client = ldap.createClient({
+			url: 'ldap://10.1.1.10:389'
+		});
+
+		client.bind(ldapusername, ldappassword , function (err) {
+			  if (err) {
+					console.log('error:',err);
+					req.flash('error', '不是合法用户');
+					return res.redirect('/');
+					//console.log(err);
+				}
+				client.unbind();
+				var md5 = crypto.createHash('md5');
+				var password = md5.update(req.body.password).digest('base64');
+				var newUser = new User({
+					name: req.body.username,
+					password: password,
+				});
+				req.session.user = newUser;
+				req.session.project = '*';
+				res.redirect('/');
+				/*
+				var md5 = crypto.createHash('md5');
+
+				User.get(req.body.username, function(err, user) {
+					if (!user) {
+						var newUser = new User({
+							name: req.body.username,
+							password: password,
+						});
+
+						newUser.save(function(err) {
+							if (err) {
+								req.flash('error', err);
+								return res.redirect('/reg');
+							}
+							req.session.user = newUser;
+							req.session.project = '*';
+							res.redirect('/');
+						});
+					});
+
+				}
+				*/
+
+		});
+  });
+ 
   app.post('/login', checkNotLogin);
   app.post('/login', function(req, res) {
 
@@ -242,6 +298,21 @@ module.exports = function(app) {
 				res.redirect('/m/tcontext');
 			});
 		});
+	});
+
+	app.get('/up/:pname', checkLogin);
+	app.get('/up/:pname', function(req, res) {
+
+		var username = req.session.user.name;
+		var project = req.params.pname;
+		Watch.del(username,project, function(err) {
+				if (err) {
+					req.flash('error', err);
+					return res.redirect('/m/tproject');
+				}
+				req.flash('success', '取消关注关注成功');
+				res.redirect('/m/tproject');
+			});
 	});
 
 

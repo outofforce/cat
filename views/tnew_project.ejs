@@ -3,7 +3,7 @@
 <div class="page-header">
 	<h1>新建项目</h1>
 </div>
-	<form class="form-horizontal" method="post">
+	<form class="form-horizontal" method="post" action="/new_project">
 		<fieldset>
 			<div class="control-group">
 				<label class="control-label" for="project_name">项目名称</label>
@@ -24,9 +24,9 @@
 				</div>
 			</div>
 			<div class="control-group">
-				<label class="control-label" for="project_sp">发起方</label>
+				<label class="control-label" for="project_sp">创建者</label>
 				<div class="controls">
-					<input type="text" class="input-xlarge" id="project_sp" name="project_sp">
+					<input type="text" class="input-xlarge" disabled="true" id="project_sp" name="project_sp" value="<%= user.name %>">
 				</div>
 			</div>
 			<hr>

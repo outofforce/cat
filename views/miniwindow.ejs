@@ -4,22 +4,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel='stylesheet' href='/stylesheets/bootstrap.css' />
     <link rel='stylesheet' href='/stylesheets/docs.css' />
-		<style type="text/css">
-
-			.catsubhead {
-				border-bottom: 1px solid #DDDDDD;
-				text-align: left;
-			}
-			.catjumbotron {
-				background: linear-gradient(45deg, #020031 0%, #6D3353 100%) repeat scroll 0 0 transparent;
-				box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2) inset, 0 -3px 7px rgba(0, 0, 0, 0.2) inset;
-				color: #FFFFFF;
-				padding: 40px 0;
-				position: relative;
-				text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 0, 0, 0.075);
-			}
-
-    </style>
 		<link href="stylesheets/bootstrap-responsive.css" rel="stylesheet">
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -27,7 +11,7 @@
 		<![endif]-->
   </head>
   <body>
-     <div class="navbar navbar-inverse navbar-fixed-top">
+     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -61,6 +45,9 @@
 	function fake_windowendevents() {
 		 var tfile = $("#uploadfilename").val();
 		 window.opener.$("#uploadimagename").html(tfile);
+		 alert(window.opener.$("div[group=1234]").attr("style"));
+		 window.opener.$("div[group=1234]").attr("style","");
+
 		 window.close();
 		 
   }

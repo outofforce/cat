@@ -37,6 +37,35 @@ Watch.prototype.save = function save(callback) {
   });
 };
 
+Watch.del= function save(username,pname,callback) {
+	if (username == null || pname == null) {
+		return callback("参数不能为空");
+	}
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err);
+    }
+    db.collection('watches', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err);
+      }
+			var query = {};
+      if (pname) {
+        query.pname = pname;
+      } 
+      if (username) {
+        query.user = username;
+      }
+
+      collection.remove(query, {safe: true}, function(err, watch) {
+        mongodb.close();
+        callback(err);
+      });
+    });
+  });
+};
+
 Watch.getByUser = function get(username, callback) {
   mongodb.open(function(err, db) {
     if (err) {

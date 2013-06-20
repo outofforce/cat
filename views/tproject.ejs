@@ -1,4 +1,3 @@
-       <section id="catTextInput">
 
 					<form method="post" action="/find_projects" class="well form-inline center" style="text-align:center;">
 						<input type="text" class="span5" name="find_projects">
@@ -7,7 +6,6 @@
           <div class="page-header">
           </div>
 
-        </section>
 
 					 <div class="span6">
 <% projects.forEach(function(item, index) { %>
@@ -18,8 +16,25 @@
 							<li><a href="#">评论</a></li>
 							<li class="muted">&middot;</li>
 							<li><a href="#">删除</a></li>
-							<li class="muted">&middot;</li>
+							<li class="muted">&middot;</li> 
+
+
+
+<% var haswatch = false;
+	mywatches.forEach(function(watch,index) { 
+		if (watch.pname == item.pname) 
+		{
+			haswatch = true;
+		}
+	});
+
+ if (haswatch == true)
+ { %>
+							<li><a href="/up/<%= item.pname %>">取消关注</a></li>
+ <% } else { %>
 							<li><a href="/p/<%= item.pname %>">关注</a></li>
+<% } %>
+
 					</ul>
 					<hr>
 
