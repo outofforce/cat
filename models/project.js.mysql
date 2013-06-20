@@ -1,0 +1,68 @@
+var dbconn= require('./mysqldb');
+
+function Project(name,desc) {
+  this.name = name;
+  this.desc= desc;
+};
+module.exports = Project;
+
+Project.prototype.save = function save(callback) {
+  // 存入mysql
+  var project = {
+    name: this.name,
+    desc: this.desc,
+  };
+  dbconn.connect(function(err) {
+    if (err) {
+      return callback(err);
+    }
+	});
+
+	dbconn.query('INSERT INTO project SET ?',project,function(err,result) {
+		dbconn.end();
+		if (err) {
+			return callback(err);
+		}
+		callback(err,project);
+
+	});
+};
+
+Project.get = function get(pname, callback) {
+	dbconn.connect();
+	/*function(err) {
+		console.log("dbhererere 1");
+		if (err) {
+			console.log("dbhererere 2:"+err);
+			return callback(err);
+		}
+	});
+	*/
+
+	var sql ='';
+	if (pname != null) {
+		console.log("dbhererere 3");
+		sql = 'select * from project where name = ' + dbconn.escape(pname);
+	} else {
+		console.log("dbhererere 4");
+		sql = 'select * from project'
+	}
+
+	dbconn.query(sql,function(err,results) {
+		console.log("dbhererere 5");
+		if (err) {
+			console.log("dbhererere 6");
+			return callback(err);
+		}
+		var projects = [];
+		console.log("dbhererere 7");
+		results.forEach(function(doc, index) {
+			var project= new Project(doc.name, doc.desc);
+			projects.push(project);
+		});
+		callback(null, projects);
+	});
+
+	dbconn.end();
+
+};

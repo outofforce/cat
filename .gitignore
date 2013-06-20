@@ -1,0 +1,6 @@
+.nide
+.DS_Store
+.npmignore
+node_modules
+view/unuse
+public/upload

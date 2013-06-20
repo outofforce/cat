@@ -1,0 +1,11 @@
+			<ul class="nav nav-list bs-docs-sidenav">
+				<li><a href="#">TOP</a></li>
+				<li><a href="/m/tnew_project">新建项目</a></li>
+				<li><a href="/m/tproject">关注项目</a></li>
+
+
+ <% mywatches.forEach(function(item, index) { %>
+				<li><a onclick="javascript:setProjectName(this)">@<%= item.pname %></a></li>
+ <% }) %>
+			</ul>
+

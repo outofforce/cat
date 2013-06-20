@@ -1,0 +1,15 @@
+<html>
+  <body>
+		<%- body %>
+	</body>
+  <script src="/javascripts/jquery.js"></script>
+	<script type="text/javascript">
+		$().ready(function(){
+				var tfile = $("#uploadfilename").html();
+				window.opener.$("#uploadimagename").html("<img  src='"+tfile+"' />");
+				window.opener.$("#uploadimagenameInput").val(tfile);
+				window.close();
+		});
+
+	</script>
+</html>
