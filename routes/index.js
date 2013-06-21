@@ -236,11 +236,11 @@ module.exports = function(app) {
     User.get(req.body.username, function(err, user) {
       if (!user) {
         req.flash('error', '用户不存在');
-        return res.redirect('/login');
+        return res.redirect('/');
       }
       if (user.password != password) {
         req.flash('error', '用户口令错误');
-        return res.redirect('/login');
+        return res.redirect('/');
       }
       req.session.user = user;
       req.flash('success', '登入成功');
@@ -383,6 +383,7 @@ module.exports = function(app) {
 		});
 	});
 
+	app.get('/file-upload', checkLogin);
 	app.get('/file-upload',function(req,res){
 		var t_image_path=null;
 		res.render('upload', {
@@ -391,6 +392,7 @@ module.exports = function(app) {
 				});
 	});
 
+	app.post('/file-upload', checkLogin);
 	app.post('/file-upload',function(req,res){
 		console.log(req.files.image);
 		var tmp_path = req.files.image.path;
@@ -414,6 +416,65 @@ module.exports = function(app) {
 		});
 	});
 
+	app.post('/postpost', checkLogin);
+	app.post('/postpost',function(req,res){
+		var postposttxt = req.body.name;
+		console.log(req.body);
+
+		if (postposttxt == null || postposttxt == "" ) {
+			Post.getSubPost(req.body.sub_id,function(err,posts) {
+				
+				res.render('getPostPost',{
+					layout:'getPostPostLayout',
+					posts:posts
+				});
+			});
+		} else {
+			var post = new Post(
+							req.session.user.name, 
+							postposttxt,
+							null,
+							req.body.post_project_name,
+							null,
+							req.body.sub_id,
+							null);
+
+			post.save(function(err) {
+				if (err) {
+					var posts = [];
+					res.render('getPostPost',{
+						layout:'getPostPostLayout',
+						posts:posts,
+					});
+				}
+
+				Post.getSubPost(req.body.sub_id,function(err,posts) {
+					res.render('getPostPost',{
+						layout:'getPostPostLayout',
+						posts:posts
+					});
+
+				});
+
+			});
+		}
+
+	});
+
+
+	app.post('/post', checkLogin);
+	app.post('/post', function(req, res) {
+		var currentUser = req.session.user;
+		var post = new Post(currentUser.name, req.body.post,null,req.body.post_project_name,req.body.uploadimagenameInput);
+		post.save(function(err) {
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/m/tcontext');
+			}
+			req.flash('success', '发表成功');
+			res.redirect('/m/tcontext');
+		});
+	});
 
 
 };

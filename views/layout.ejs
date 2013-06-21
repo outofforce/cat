@@ -119,8 +119,34 @@
 
 	}
 
+function getPostPostOK(obj) {
+
+	var a1= "input[name='postpostTxt"+obj+"']";
+	var a2= "#postpostcontext"+obj;
+
+	//alert(a1);
+	//alert(a2);
+
+	  var tdata="name="+$(a1).val() +"&sub_id="+obj+"";
+		$(a1).val(null);
+		$.ajax({
+			url: "/postpost",
+			type: "POST",
+			data: tdata,
+			async: false,
+			cache: false,
+			success: function(buf){
+				
+			  $(a2).html(buf);
+			},
+			beforeSend: function(XMLHttpRequest){
+			},
+			complete: function(XMLHttpRequest, textStatus){
+			}
+		});
+}
+
 </script>
 
   </body>
 </html>
-

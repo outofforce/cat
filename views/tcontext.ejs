@@ -20,32 +20,63 @@
 
 <% posts.forEach(function(item, index) { %>
 
-          <h4><%= item.user %>:</h4>
+<div class="row" >
+					 <h4><%= item.user %>:</h4>
 					<p>
 						<span class="icon-bar"></span>
-						<%= item.post %>
+						<%= item.post %> 
+<% if (item.pname == '*') { %>
+<% } else { %>
+						<span class="icon-bar"></span>
+						<a href="#"><span class="label label-warning"><%= item.pname %></span></a>
+<% } %>
+
 					</p>
+
 <% if (item.image != "*") { %> 
 							<img src="<%= item.image %>" /> 
 <% } %>
+<p></p>
+</div>
 			
 					
+<div class="row">
 					
-					<ul class="footer-links">
-							<li><a href="#">评论</a></li>
-							<li class="muted">&middot;</li>
-							<li><a href="#">喜欢</a></li>
-							<li class="muted">&middot;</li>
-							<li><a href="#">收藏</a></li>
 
-<% if (item.pname == '*') { %>
-							<li><a href="#"><%= item.pname %></a></li>
-<% } else { %>
-						<span class="icon-bar"></span>
-						<li><a href="#"><span class="label label-warning"><%= item.pname %></span></a></li>
-<% } %>
-					</ul>
-					<hr>
+    <div class="tabbable" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;"> <!-- Only required for left/right tabs -->
+
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab1<%= item.id %>" data-toggle="tab">.....</a></li>
+				<li><a href="#tab2<%= item.id %>" onclick="javascript:getPostPostOK('<%= item.id %>');" data-toggle="tab">评论</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab1<%= item.id %>">
+						<ul class="nav">
+							<li class="btn btn-small"><a href="#">收 到</a></li>
+							<li class="btn btn-small"><a href="#">收 藏</a></li>
+							<li class="btn btn-small"><a href="#">有 用</a></li>
+						</ul>
+				</div>
+
+				<div class="tab-pane" id="tab2<%= item.id %>">
+					<div class="span6 ">
+						<div class="form-search">
+							<input type="text" class="span5" name="postpostTxt<%= item.id %>">
+							<button onclick="javascript:getPostPostOK('<%= item.id %>');" type="button" class="btn">评论</button> 
+						</div>
+						<div id="postpostcontext<%= item.id %>" name="postpostcontext">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+
+
+
+</div>
+
+
 <%}) %>
 
 

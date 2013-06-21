@@ -126,4 +126,18 @@
   </body>
   <script src="/javascripts/jquery.js"></script>
   <script src="/javascripts/bootstrap.js"></script>
+<script type="text/javascript">
+	function logwithLdap(obj) {
+		alert("ww");
+		$("#coverlogin").attr("action","/loginldap");
+		$("#username").attr("placeholder","公司账户（不加域名）");
+	}
+	function logwithNormal() {
+		$("#coverlogin").attr("action","/login");
+		$("#username").attr("placeholder","用户名");
+	}
+	}
+</script>
+
+
 </html>

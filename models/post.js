@@ -1,6 +1,7 @@
 var mongodb = require('./db');
+var ObjectID= require('mongodb').ObjectID;
 
-function Post(username, post, time,pname,image) {
+function Post(username, post,time,pname,image,sub_id,id) {
   this.user = username;
   this.post = post;
   if (time) {
@@ -8,6 +9,7 @@ function Post(username, post, time,pname,image) {
   } else {
     this.time = new Date();
   }
+	this.update=this.time;
 	if (pname) {
 	  this.pname = pname;
 	} else {
@@ -18,6 +20,13 @@ function Post(username, post, time,pname,image) {
 	} else {
 		this.image="*";
 	}
+	if (id) {
+		this.id=id;
+	}
+	if (sub_id) {
+		this.sub_id=sub_id;
+	}
+
 };
 
 module.exports = Post;
@@ -30,6 +39,8 @@ Post.prototype.save = function save(callback) {
     time: this.time,
 		pname: this.pname,
 		image: this.image,
+		sub_id: this.sub_id,
+    update: this.update,
   };
   mongodb.open(function(err, db) {
     if (err) {
@@ -42,15 +53,30 @@ Post.prototype.save = function save(callback) {
       }
       collection.ensureIndex('user');
       collection.ensureIndex('pname');
-			console.log("New :",post);
 			
-      collection.insert(post, {safe: true}, function(err, post) {
-        mongodb.close();
-        callback(err, post);
+			
+
+      collection.insert(post, {safe: true}, function(err, posts) {
+				if (err) {
+					mongodb.close();
+					return callback(err);
+				}
+				if (post.sub_id != null && post.sub_id != "") {
+					// 为了方便，更新sub_id 的时间
+				  collection.update({_id:new ObjectID(post.sub_id)},{$set:{time:new Date()}},{safe:true},function(err) {
+						mongodb.close();
+						callback(err,posts);
+					})
+
+				} else {
+					mongodb.close();
+					callback(err,posts);
+				}
       });
     });
   });
 };
+
 
 Post.get = function get(username, callback) {
   mongodb.open(function(err, db) {
@@ -68,6 +94,8 @@ Post.get = function get(username, callback) {
       if (username) {
         query.user = username;
       }
+			query.sub_id=null;
+
       collection.find(query).sort({time: -1}).limit(20).toArray(function(err, docs) {
         mongodb.close();
         if (err) {
@@ -76,7 +104,44 @@ Post.get = function get(username, callback) {
 
         var posts = [];
         docs.forEach(function(doc, index) {
-          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image);
+
+					//console.log("------:",doc._id);
+          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
+          posts.push(post);
+        });
+        callback(null, posts);
+      });
+    });
+  });
+};
+
+Post.getSubPost = function getpostpost(sub_id, callback) {
+  mongodb.open(function(err, db) {
+    if (err) {
+      return callback(err);
+    }
+
+    db.collection('posts', function(err, collection) {
+      if (err) {
+        mongodb.close();
+        return callback(err);
+      }
+
+      var query = {};
+      if (sub_id) {
+        query.sub_id= sub_id;
+      }
+      collection.find(query).sort({time: -1}).toArray(function(err, docs) {
+        mongodb.close();
+        if (err) {
+          callback(err, null);
+        }
+
+        var posts = [];
+        docs.forEach(function(doc, index) {
+
+//					console.log("------:",doc._id);
+          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
           posts.push(post);
         });
         callback(null, posts);
@@ -117,7 +182,8 @@ Post.getByPNameAndUser = function get(pname,username,callback) {
         var posts = [];
         docs.forEach(function(doc, index) {
 
-          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image);
+          //var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id);
+          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
           posts.push(post);
         });
         callback(null, posts);
