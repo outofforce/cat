@@ -1,8 +1,9 @@
 var mongodb = require('./db');
 var ObjectID= require('mongodb').ObjectID;
 
-function Post(username, post,time,pname,image,sub_id,id) {
+function Post(username, post,post_to,time,pname,image,sub_id,id) {
   this.user = username;
+  this.post_to = post_to;
   this.post = post;
   if (time) {
     this.time = time;
@@ -36,6 +37,7 @@ Post.prototype.save = function save(callback) {
   var post = {
     user: this.user,
     post: this.post,
+    post_to: this.post_to,
     time: this.time,
 		pname: this.pname,
 		image: this.image,
@@ -55,23 +57,15 @@ Post.prototype.save = function save(callback) {
       collection.ensureIndex('pname');
 			
 			
+			//console.log("post=",post);
 
       collection.insert(post, {safe: true}, function(err, posts) {
 				if (err) {
 					mongodb.close();
 					return callback(err);
 				}
-				if (post.sub_id != null && post.sub_id != "") {
-					// 为了方便，更新sub_id 的时间
-				  collection.update({_id:new ObjectID(post.sub_id)},{$set:{time:new Date()}},{safe:true},function(err) {
-						mongodb.close();
-						callback(err,posts);
-					})
-
-				} else {
-					mongodb.close();
-					callback(err,posts);
-				}
+				mongodb.close();
+				callback(err,posts);
       });
     });
   });
@@ -106,7 +100,7 @@ Post.get = function get(username, callback) {
         docs.forEach(function(doc, index) {
 
 					//console.log("------:",doc._id);
-          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
+          var post = new Post(doc.user, doc.post, doc.post_to,doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
           posts.push(post);
         });
         callback(null, posts);
@@ -141,7 +135,7 @@ Post.getSubPost = function getpostpost(sub_id, callback) {
         docs.forEach(function(doc, index) {
 
 //					console.log("------:",doc._id);
-          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
+          var post = new Post(doc.user, doc.post,doc.post_to, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
           posts.push(post);
         });
         callback(null, posts);
@@ -173,7 +167,7 @@ Post.getByPNameAndUser = function get(pname,username,callback) {
 
       collection.find(query).sort({time: -1}).limit(20).toArray(function(err, docs) {
         mongodb.close();
-				console.log('query:',docs);
+				//console.log('query:',docs);
         if (err) {
 					console.log(err);
           callback(err, null);
@@ -183,7 +177,7 @@ Post.getByPNameAndUser = function get(pname,username,callback) {
         docs.forEach(function(doc, index) {
 
           //var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id);
-          var post = new Post(doc.user, doc.post, doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
+          var post = new Post(doc.user, doc.post, doc.post_to,doc.time,doc.pname,doc.image,doc.sub_id,doc._id);
           posts.push(post);
         });
         callback(null, posts);

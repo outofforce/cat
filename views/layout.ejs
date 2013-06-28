@@ -46,32 +46,22 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
 							<li class="active"><a href="/"><b>CAT</b></a></li>
-							<li><a href="/logout">退出 <span></span> [<%= user.name %>]</a></li>
+							<li class=""><a href="/m/tcontext"><b>首页</b></a></li>
+							<% if (user) { %>
+								<li class=""><a href="/m/tnew_project"><b>管理项目</b></a></li>
+								<li class=""><a href="/m/tproject"><b>关注项目</b></a></li>
+								<li class=""><a href="/m/tnewTodo"><b>管理任务</b></a></li>
+							<% } %>
+							<li><a href="/logout">退出 <span class=""></span> ［ <%= user.name %> ］ </a></li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-<!-- Subhead
-================================================== -->
-<!-- <header class="jumbotron subhead" id="overview"> 
-<header class="topbarbg subhead" id="overview">
-  <div class="container">
-		<h2><%= user.name %> 欢迎光临</h2>
-		<p class="lead"><small>cat 是一个项目讨论社交平台</small></p>
-  </div>
-	</header> -->
 
- <div class="container" style="padding-top:20px;">
-	<div class="row">
-		<div class="span3">
-			<%- partial('tleftbar',{mywatches:mywatches}) %>
-		</div>
-		<div class="span7">
-			<%- body %>
-		</div>
-		<div class="span2">
+
+<% if ((success) || (error)) { %>
 <% if (success) { %>
 <div class="alert alert-success">
 	<%= success %>
@@ -82,10 +72,29 @@
 	<%= error %>
 </div>
 <% } %>
+<% } else {  %>
+<div class="alert alert-info">
+	<b>Contribute All Tasks </b>
+</div>
+<% } %>
 
-			</div>
+ <div class="container" style="padding-top:0px;">
+	<div class="row">
+
+		<div class="span3" >
+			<%- partial('tleftbar',{items:__INPUT.leftArgs}) %>
+		</div>
+		<div class="span7" >
+			<%- body %>
+		</div>
+		<!--
+		<div class="span3">
+			<%- partial('trightbar',{items:__INPUT.rightArgs}) %>
+		</div>
+		-->
 	</div>
 </div>
+
 
 
 
@@ -119,32 +128,73 @@
 
 	}
 
-function getPostPostOK(obj) {
+	function getPostPostOK(obj) {
 
-	var a1= "input[name='postpostTxt"+obj+"']";
-	var a2= "#postpostcontext"+obj;
+		var a1= "input[name='postpostTxt"+obj+"']";
+		var a2= "#postpostcontext"+obj;
 
-	//alert(a1);
-	//alert(a2);
+		//alert(a1);
+		//alert(a2);
 
-	  var tdata="name="+$(a1).val() +"&sub_id="+obj+"";
-		$(a1).val(null);
-		$.ajax({
-			url: "/postpost",
-			type: "POST",
-			data: tdata,
-			async: false,
-			cache: false,
-			success: function(buf){
-				
-			  $(a2).html(buf);
-			},
-			beforeSend: function(XMLHttpRequest){
-			},
-			complete: function(XMLHttpRequest, textStatus){
-			}
-		});
-}
+			var tdata="postTxt="+$(a1).val() +"&task_id="+obj+"";
+			$(a1).val(null);
+			$.ajax({
+				url: "/postpost",
+				type: "POST",
+				data: tdata,
+				async: false,
+				cache: false,
+				success: function(buf){
+					
+					$(a2).html(buf);
+				},
+				beforeSend: function(XMLHttpRequest){
+				},
+				complete: function(XMLHttpRequest, textStatus){
+				}
+			});
+	}
+
+	function getPostKey(e,obj) {
+
+		if (e.keyCode == 13)
+			getPostPostOK(obj);
+	}
+
+  var PUser=[] ;
+	function getPUser(obj) {
+			if ($("#todo_project").val() !="*") {
+				var tdata="pname="+$("#todo_project").val();
+				$.ajax({
+					url: "/getPnameUser",
+					type: "GET",
+					data: tdata,
+					async: false,
+					cache: false,
+					success: function(buf){
+						var tmp=[];
+						for (var i=0;i<buf.users.length;i++) {
+							tmp[i]='"@'+buf.users[i].user+'"';
+						}
+						PUser = tmp;
+					},
+					beforeSend: function(XMLHttpRequest){
+					},
+					complete: function(XMLHttpRequest, textStatus){
+					}
+				});
+		 }
+	}
+
+	function setTodoWorder(obj) {
+
+		if (obj.value == "toOther") {
+			$('#todo_worker').attr('type','text'); 
+		} else {
+			$('#todo_worker').attr('type','hidden'); 
+			$('#todo_worker').val('');
+		}
+	}
 
 </script>
 

@@ -1,12 +1,25 @@
-<div class="well sidebar-nav">
-			<ul class="nav nav-list">
-				<li class="nav-header">操作</li>
-				<li><a href="/m/tnew_project">新建项目</a></li>
-				<li><a href="/m/tproject">关注项目</a></li>
-				<li class="nav-header">我的关注</li>
- <% mywatches.forEach(function(item, index) { %>
-				<li><a onclick="javascript:setProjectName(this)">@<%= item.pname %></a></li>
- <% }) %>
-			</ul>
+<div class="row" style="border-right: 1px solid rgb(238, 238, 238);">
+<div class="page-header" >
+我的任务 
+</div>
+
+<% items.forEach(function(item, index) { %>
+
+
+<div  style="margin: 0px 10px 20px; border-bottom: 1px solid rgb(238, 238, 238); ">
+<p ><span class="label label-default"><small>
+<% if (item.relaPname=="*") { %>
+默认
+<% } else { %>
+<%= item.relaPname %>
+<% } %>
+</small></span> <span class="label label-info"><small><%= item.taskOwner %></small></span> </p>
+<label class="checkbox">
+  <input type="checkbox" value="">
+	<%= item.taskName %>
+</label>
+</div>
+
+<% }) %>
 
 </div>

@@ -1,0 +1,25 @@
+<div class="row" id="lefbardemo">
+	<div class="page-header" >
+	我创建的任务 
+	</div>
+<% items.forEach(function(item, index) { %>
+		<div class="accordion-group">
+			<div class="accordion-heading">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#lefbardemo" href="#task<%= item.id %>">
+
+					<%= item.taskName %>
+				</a>
+			</div>
+			<div id="task<%= item.id %>" class="accordion-body collapse in">
+				<div class="accordion-inner">
+					<%= item.taskDesc %>
+<p ><span class="label label-default"><small><%= item.relaPname %></small></span> <span class="label label-info"><small><%= item.taskOwner %></small></span> </p>
+
+				</div>
+			</div>
+		</div>
+
+<% }) %>
+
+              
+</div>

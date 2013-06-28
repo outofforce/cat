@@ -3,13 +3,17 @@ var User = require('../models/user.js');
 var Post = require('../models/post.js');
 var Project = require('../models/project.js');
 var Watch= require('../models/watch.js');
+var Task= require('../models/task.js');
 var fs= require('fs');
 var url = require('url');
 var ldap = require('ldapjs');
+var Notify= require('../models/notify.js');
 
 module.exports = function(app) {
 
 	app.get('/', function(req, res) {
+		
+
 		if (!req.session.user) {
 			res.render('cover', {
 				title: '首页',
@@ -22,59 +26,62 @@ module.exports = function(app) {
 	});
 
 	app.get('/m/:mtype', checkLogin);
+	app.get('/m/:mtype', getWathersData);
+	app.get('/m/:mtype', getTasks);
 	app.get('/m/:mtype', function(req, res) {
 
 		 var tmtype = req.params.mtype;
 
-		 console.log('============',tmtype);
-		 Watch.getByUser(req.session.user.name, function(err, watches) {
+		 var leftArgs=[],rightArgs=[];
+		 if (req.body.__leftArgs != null) {
+			 leftArgs=req.body.__leftArgs;
+		 }
+		 if (req.body.__rightArgs!= null) {
+			 rightArgs=req.body.__rightArgs;
+		 }
+		 var __INPUT=[];
+		 __INPUT.leftArgs=leftArgs;
+		 __INPUT.rightArgs=rightArgs;
+		 __INPUT.mywatches=rightArgs;
+		 __INPUT.from=tmtype;
 
-			 console.log('req.session=', req.session);
+		 if (tmtype == 'tproject') {
 
-			 if (tmtype == 'tproject') {
-
-				 Project.get(null, function(err, projects) {
-					 if (err) {
-						 projects = [];
-					 }
-					 res.render(tmtype, {
-						 title: '项目列表',
-						 from:'project',
-						 projects:projects,
-						 mywatches:watches,
-					 });
-
+			 Project.get(null, function(err, projects) {
+				 if (err) {
+					 projects = [];
+				 }
+				 __INPUT.projects=projects;
+				 __INPUT.title='项目列表';
+				 res.render(tmtype, {
+					 __INPUT:__INPUT,
 				 });
-			 } else if (tmtype =='tcontext') {
 
-					Post.get(null, function(err, posts) {
-					//console.log('============',posts);
-					//console.log('============',watches);
-						if (err) {
-							posts = [];
-						}
-						res.render(tmtype, {
-								title: '首页',
-								from:tmtype,
-								posts:posts,
-								mywatches:watches,
-						});
+			 });
+		 } else if (tmtype =='tcontext') {
+
+				Task.get(null, function(err, tasks) {
+					if (err) {
+						tasks= [];
+					}
+				 __INPUT.tasks=tasks;
+				 __INPUT.title='首页';
+					res.render(tmtype, {
+							__INPUT:__INPUT,
 					});
-			  }  else {
-					 res.render(tmtype, {
-						 title: tmtype,
-						 from:tmtype,
-						 mywatches:watches,
-					 });
-				}
+				});
+			}  else {
+				 __INPUT.title=tmtype;
+				 res.render(tmtype, {
+					 __INPUT:__INPUT,
+				 });
+			}
 
-			});
 	});
 
 
 	app.get('/project', checkLogin);
 	app.get('/project', function(req, res) {
-		 //req.session.asfrom="project";
      res.redirect('/');
 	
 	});
@@ -178,17 +185,14 @@ module.exports = function(app) {
 		}
 		var ldapusername='ailk\\'+req.body.username;
 
-		console.log(ldapusername+'  + + ',ldappassword);
 		var client = ldap.createClient({
 			url: 'ldap://10.1.1.10:389'
 		});
 
 		client.bind(ldapusername, ldappassword , function (err) {
 			  if (err) {
-					console.log('error:',err);
 					req.flash('error', '不是合法用户');
 					return res.redirect('/');
-					//console.log(err);
 				}
 				client.unbind();
 				var md5 = crypto.createHash('md5');
@@ -252,6 +256,8 @@ module.exports = function(app) {
   app.get('/logout', function(req, res) {
     req.session.user = null;
     req.flash('success', '登出成功');
+		req.body.__channel=req.query.channel;
+
     res.redirect('/');
   });
 
@@ -281,7 +287,6 @@ module.exports = function(app) {
 
 		var username = req.session.user.name;
 		req.session.project = req.params.pname;
-		console.log('PPP:',req.session.project);
 		Watch.getByPNameAndUser(req.params.pname,username, function(err, watches) {
 			if (watches.length>0) {
 				req.flash('error', '您已经关注过这个项目');
@@ -316,11 +321,12 @@ module.exports = function(app) {
 	});
 
 
+	/*
 	app.post('/post', checkLogin);
 	app.post('/post', function(req, res) {
 		var currentUser = req.session.user;
-		var post = new Post(currentUser.name, req.body.post,null,req.body.post_project_name,req.body.uploadimagenameInput);
-		post.save(function(err) {
+		var post = new Post(currentUser.name, req.body.post,null,null,req.body.post_project_name,req.body.uploadimagenameInput);
+	save(function(err) {
 			if (err) {
 				req.flash('error', err);
 				return res.redirect('/m/tcontext');
@@ -329,6 +335,7 @@ module.exports = function(app) {
 			res.redirect('/m/tcontext');
 		});
 	});
+	*/
 
 	app.get('/mywatches', checkLogin);
 	app.get('/mywatches',function(req,res) {
@@ -394,7 +401,6 @@ module.exports = function(app) {
 
 	app.post('/file-upload', checkLogin);
 	app.post('/file-upload',function(req,res){
-		console.log(req.files.image);
 		var tmp_path = req.files.image.path;
 		var target_path = './public/upload/' + req.files.image.name;
 		var t_target_path='/upload/'+req.files.image.name;
@@ -417,67 +423,172 @@ module.exports = function(app) {
 	});
 
 	app.post('/postpost', checkLogin);
-	app.post('/postpost',function(req,res){
-		var postposttxt = req.body.name;
-		console.log(req.body);
-
-		if (postposttxt == null || postposttxt == "" ) {
-			Post.getSubPost(req.body.sub_id,function(err,posts) {
-				
-				res.render('getPostPost',{
-					layout:'getPostPostLayout',
-					posts:posts
-				});
-			});
-		} else {
-			var post = new Post(
-							req.session.user.name, 
-							postposttxt,
-							null,
-							req.body.post_project_name,
-							null,
-							req.body.sub_id,
-							null);
-
-			post.save(function(err) {
-				if (err) {
-					var posts = [];
-					res.render('getPostPost',{
-						layout:'getPostPostLayout',
-						posts:posts,
-					});
-				}
-
-				Post.getSubPost(req.body.sub_id,function(err,posts) {
-					res.render('getPostPost',{
-						layout:'getPostPostLayout',
-						posts:posts
-					});
-
-				});
-
-			});
-		}
-
-	});
+	app.post('/postpost', postATask);
 
 
-	app.post('/post', checkLogin);
-	app.post('/post', function(req, res) {
-		var currentUser = req.session.user;
-		var post = new Post(currentUser.name, req.body.post,null,req.body.post_project_name,req.body.uploadimagenameInput);
-		post.save(function(err) {
+
+	app.post('/new_todo', checkLogin);
+	app.post('/new_todo', newTodoCheck);
+	app.post('/new_todo', newTask);
+	app.post('/new_todo', recieveTask);
+
+
+	app.get('/recieveTask', checkLogin);
+	app.get('/recieveTask', recieveTask);
+
+
+
+
+	app.get('/getPnameUser', checkLogin);
+	app.get('/getPnameUser', function(req, res) {
+
+		var pname = req.query.pname;
+		Watch.getByPName(pname,function(err, watches) {
 			if (err) {
 				req.flash('error', err);
-				return res.redirect('/m/tcontext');
+				return res.redirect('/');
 			}
-			req.flash('success', '发表成功');
-			res.redirect('/m/tcontext');
+			return res.json({users:watches});
 		});
 	});
-
-
 };
+
+function newTask(req, res,next) {
+
+		var worker=null,level=0;
+		if (req.body.todo_attr == 'toSelf'){
+			worker=req.body.todo_sp;
+		}
+
+		var task = new Task(
+					worker,
+					level,
+					req.body.todo_sp,
+					req.body.todo_name,
+					req.body.todo_desc,
+					req.body.todo_attr,
+					'open', // 新开为open
+					req.body.todo_project, 
+					null, // 派发给谁，先为空
+					req.body.uploadimagenameInput,
+					null, // 创建时间，为空 ,发生时间
+					new Date(),
+					req.body.todo_days,
+					req.body.todo_price
+					);
+		task.save(function(err,tasks) {
+			
+			if (err) {
+				req.flash('error', err);
+				return res.redirect('/m/tnewTodo');
+			}
+			if (req.body.todo_attr == 'toOther') {
+				req.body.__taskId=''+tasks[0]._id;
+				req.body.__type='assign'
+				req.body.__worker=req.body.todo_worker;
+				next();
+			} else {
+				req.flash('success', '发表成功');
+				res.redirect('/m/tnewTodo');
+			}
+		});
+	}
+
+
+function recieveTask(req, res, next) {
+	  var taskid=null,worker=null,type=null;
+	  if (req.query.task) {
+			taskid = req.query.task;
+			worker = req.session.user.name; 
+			type = 'recieve';
+		} else {
+			taskid = req.body.__taskId;
+			worker = req.body.__worker;
+			type = req.body.__type;
+		}
+		console.log("loooooook  ",taskid);
+		console.log("loooooook  ",worker);
+		console.log("loooooook  ",type);
+
+		Task.getById(taskid,function(err,task) {
+			
+			var newtask = task;
+			newtask.taskWorker=worker
+			newtask.taskLevel=Number(task.taskLevel)+Number(1);
+			newtask.createTime= new Date();
+			newtask.updateTime = newtask.createTime;
+			newtask.taskAttr = type;
+			newtask.assigners = ''+task.id;
+			var msg='派发任务给 @'+worker;
+			if (type == 'recieve') {
+				 msg='认领  @' + newtask.taskOwner+ ' 的任务'
+			}
+
+			newtask.save(function(err) {
+
+				if (err) {
+					req.flash('error', err);
+					return res.redirect('/m/tcontext');
+				}
+
+				/*
+				var post = new Post(
+										req.session.user.name,
+										msg,
+										newtask.taskOwner,
+										null,
+										newtask.relaPname,
+										null,
+										newtask.assigners
+										);
+
+				post.save(function(err) {
+					if (err) {
+						req.flash('error', err);
+						return res.redirect('/m/tcontext');
+					}
+				});
+					*/
+
+					var sets= {};
+					sets.updateTime=new Date();
+					Task.update(newtask.assigners,sets,function(err) {
+						if (err) {
+							req.flash('error', err);
+							return res.redirect('/m/tcontext');
+						}
+
+						genNewPost(msg,req.session.user.name,newtask.assigners,function(err,apost) {
+							if (err) { 
+								req.flash('error', err);
+								return res.redirect('/m/tcontext');
+							}
+
+							genPostNotify(apost,function(err){ 
+								if (err) { 
+									req.flash('error', err);
+									return res.redirect('/m/tcontext');
+								}
+
+								req.flash('success', '成功');
+								res.redirect('/m/tcontext');
+							});
+						});
+					});
+			});
+		});
+}
+function newTodoCheck(req, res, next) {
+
+	if 	((req.body.todo_name == null) || 
+			 (req.body.todo_name == '')) 
+	{
+		req.flash('error', '任务描述不能为空');
+		return res.redirect('/m/tnewTodo');
+	}
+	next();
+
+}
 
 
 
@@ -502,11 +613,120 @@ function getWathersData(req, res, next) {
 		Watch.getByUser(
 			req.session.user.name, 
 			function(err, watches) {
-				req.session.mywatches= watches
+				req.body.__rightArgs = watches
 				next();
 		});
+}
 
+function getTasks(req, res, next) {
+		query={};
+		if (req.params.mtype == 'tcontext') {
+			query.taskWorker = req.session.user.name;
+		} else if (req.params.mtype == 'tnewTodo') {
+			query.taskOwner = req.session.user.name;
+			query.assigners = null;
+		} else {
+			query.taskOwner = req.session.user.name;
+		}
+
+		Task.getByQuery(
+			query,
+			function(err, tasks) {
+				req.body.__leftArgs= tasks ;
+			 	next();
+		});
+}
+
+function genPostNotify(newpost,callback) {
+			var notify = new Notify(
+						newpost.user,
+						newpost.post_to,
+						'p2p',
+						'email',
+						newpost.post,
+						'new',
+						null,
+						null,
+						null);
+
+			notify.save(function(err, notifys) {
+				 if (err) {
+					 return callback(err);
+				 }
+
+				 callback(null);
+			});
+}
+
+function postErr() {
+		var posts = [];
+		req.flash('error', '任务已经被删除');
+		return res.render('getPostPost',{
+			layout:'getPostPostLayout',
+			posts:posts,
+		});
 }
 
 
+function postATask(req,res,next) {
 
+	  console.log("--------------------------",req.body);
+
+		var postposttxt = req.body.postTxt;
+		if (postposttxt == null || postposttxt == "" ) {
+			Post.getSubPost(req.body.task_id,function(err,posts) {
+				if (err) { return postErr();}
+
+				res.render('getPostPost',{
+					layout:'getPostPostLayout',
+					posts:posts
+				});
+			});
+		}  else {
+			console.log('==========');
+			genNewPost(postposttxt,req.session.user.name,req.body.task_id,function(err,apost) {
+				if (err) { return postErr();}
+				console.log(apost);
+
+				genPostNotify(apost,function(err){ 
+					if (err) { return postErr();}
+
+					console.log(apost);
+					Post.getSubPost(req.body.task_id,function(err,posts) {
+						if (err) { return postErr();}
+
+						res.render('getPostPost',{
+							layout:'getPostPostLayout',
+							posts:posts
+						});
+					});
+				});
+			});
+	 }
+}
+
+function genNewPost(posttxt,who,task_id,callback) {
+
+		Task.getById(''+task_id,function(err,task) {
+			if (err) {
+				return callback(err);
+			}
+			var post = new Post(
+							who,
+							posttxt,
+							task.taskOwner,
+							null,
+							task.relaPname,
+							null,
+							''+task_id,
+							null);
+
+				post.save(function(err,posts) {
+					if (err) {
+						return callback(err);
+					}
+					return callback(null,posts[0]);
+				});
+		});
+
+}

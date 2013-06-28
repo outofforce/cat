@@ -8,7 +8,7 @@
 
 
 					 <div class="span6">
-<% projects.forEach(function(item, index) { %>
+<% __INPUT.projects.forEach(function(item, index) { %>
 
           <h4><%= item.pname %></h4>
 					<p><span class="icon-bar"></span><%= item.desc %></p>
@@ -21,7 +21,7 @@
 
 
 <% var haswatch = false;
-	mywatches.forEach(function(watch,index) { 
+	__INPUT.mywatches.forEach(function(watch,index) { 
 		if (watch.pname == item.pname) 
 		{
 			haswatch = true;

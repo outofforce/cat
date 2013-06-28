@@ -1,0 +1,85 @@
+       <!-- Global Bootstrap settings
+        ================================================== -->
+	
+<!--
+			<form method="post" action="/post" class="well form-inline center" style="text-align:left;">
+						<input type="hidden" name ="post_project_name" id="post_project_name" value="*">
+						<input type="text" class="span5" name="post" id="catpost">
+						  <button type="submit" class="btn btn-success"> 发表 </button>
+							<a onclick="javascript:uploadsomething(this)" type="button" class="btn btn-warning" > 上传附件 </a>
+							<div class="page-header" style="display:none" group="1234">
+							</div>
+							<input type="hidden" name ="uploadimagenameInput" id="uploadimagenameInput" value="*">
+							<div name ="uploadimagename" id="uploadimagename" style="display:none" group="1234">
+							</div>
+				</form>
+-->
+        <div class="page-header">
+				POST
+        </div>
+        <div class="span5">
+
+<% __INPUT.posts.forEach(function(item, index) { %>
+
+<div class="row" >
+					 <h4><%= item.user %>:</h4>
+					<p>
+						<span class="icon-bar"></span>
+						<%= item.post %> 
+<% if (item.pname == '*') { %>
+<% } else { %>
+						<span class="icon-bar"></span>
+						<a href="#"><span class="label label-warning"><%= item.pname %></span></a>
+<% } %>
+
+					</p>
+
+<% if (item.image != "*") { %> 
+							<img src="<%= item.image %>" /> 
+<% } %>
+<p></p>
+</div>
+			
+					
+<div class="row">
+					
+
+    <div class="tabbable" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;"> <!-- Only required for left/right tabs -->
+
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab1<%= item.id %>" data-toggle="tab">.....</a></li>
+				<li><a href="#tab2<%= item.id %>" onclick="javascript:getPostPostOK('<%= item.id %>');" data-toggle="tab">评论</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="tab1<%= item.id %>">
+						<ul class="nav">
+							<li class="btn btn-small"><a href="#">收 到</a></li>
+							<li class="btn btn-small"><a href="#">收 藏</a></li>
+							<li class="btn btn-small"><a href="#">有 用</a></li>
+						</ul>
+				</div>
+
+				<div class="tab-pane" id="tab2<%= item.id %>">
+					<div class="span5 ">
+						<div class="form-search">
+							<input type="text" class="span4" name="postpostTxt<%= item.id %>">
+							<button onclick="javascript:getPostPostOK('<%= item.id %>');" type="button" class="btn">评论</button> 
+						</div>
+						<div id="postpostcontext<%= item.id %>" name="postpostcontext">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+    </div>
+
+
+
+</div>
+
+
+<%}) %>
+
+
+			</div>
+

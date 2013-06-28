@@ -1,0 +1,12 @@
+<div class="page-header">
+  右边栏目	
+</div>
+<div class="well sidebar-nav">
+			<ul class="nav nav-list">
+				<li class="nav-header">我的关注</li>
+ <% items.forEach(function(item, index) { %>
+				<li><a onclick="javascript:setProjectName(this)">@<%= item.pname %></a></li>
+ <% }) %>
+			</ul>
+
+</div>

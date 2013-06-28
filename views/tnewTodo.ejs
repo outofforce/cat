@@ -1,0 +1,80 @@
+<div class="page-header">
+	新建任务
+</div>
+	<form class="form-horizontal" method="post" action="/new_todo">
+		<fieldset>
+
+			<div class="control-group">
+				<label class="control-label" for="todo_name">任务名称</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="todo_name" name="todo_name">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="todo_desc">任务描述</label>
+				<div class="controls">
+					<textarea class="span4" id="todo_desc" name="todo_desc"></textarea>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="todo_project">归属项目</label>
+				<div class="controls">
+					<select onchange="javascript:getPUser(this);" id="todo_project" name="todo_project">
+						<option value="*">默认</option>
+<% __INPUT.mywatches.forEach(function(item, index) { %>
+						<option value="<%= item.pname %>"><%= item.pname %></option>
+<% }) %>
+					</select>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="todo_attr">任务属性</label>
+				<div class="controls">
+					<select onchange="javascript:setTodoWorder(this);" id="todo_attr" name="todo_attr">
+						<option value="toSelf">分派给自己</option>
+						<option value="toOther">分派给他人</option>
+						<option value="waitFor">待认领</option>
+					</select>
+
+					<input  type="hidden" id="todo_worker" name="todo_worker" >
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="todo_sp">创建者</label>
+				<div class="controls">
+					<input type="hidden" id="todo_sp" name="todo_sp" value="<%= user.name %>">
+					<input type="text" class="input" disabled="true" id="todo_sp_v" name="todo_sp_v" value="<%= user.name %>">
+				</div>
+			</div>
+
+			<div class="control-group">
+			<label class="control-label" for="todo_price">奖励积分</label>
+				<div class="controls">
+					<input type="hidden" id="todo_price" name="todo_price" value="0">
+					<input type="text"  class="input" disabled="true" id="todo_price_v" name="todo_price_v" value="0">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="todo_days">有效期</label>
+				<div class="controls">
+					<input type="hidden" id="todo_days" name="todo_days" value="0">
+					<input type="text" class="input" disabled="true" id="todo_days_v" name="todo_days_v" value="0">
+				</div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+						<a onclick="javascript:uploadsomething(this)" type="button" class="btn btn-warning" > 上传附件 </a>
+						<button type="submit" class="btn btn-primary">发表</button>
+				</div>
+			</div>
+
+
+			<div class="page-header" style="display:none" group="1234">
+			</div>
+			<input type="hidden" name ="uploadimagenameInput" id="uploadimagenameInput" value="*">
+			<div name ="uploadimagename" id="uploadimagename"  class="span5" style="display:none" group="1234">
+			</div>
+		</fieldset>
+	</form>
