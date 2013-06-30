@@ -54,7 +54,7 @@ module.exports = function(app) {
 				 __INPUT.projects=projects;
 				 __INPUT.title='项目列表';
 				 res.render(tmtype, {
-					 __INPUT:__INPUT,
+					 __INPUT:__INPUT
 				 });
 
 			 });
@@ -67,13 +67,13 @@ module.exports = function(app) {
 				 __INPUT.tasks=tasks;
 				 __INPUT.title='首页';
 					res.render(tmtype, {
-							__INPUT:__INPUT,
+							__INPUT:__INPUT
 					});
 				});
 			}  else {
 				 __INPUT.title=tmtype;
 				 res.render(tmtype, {
-					 __INPUT:__INPUT,
+					 __INPUT:__INPUT
 				 });
 			}
 
@@ -140,7 +140,7 @@ module.exports = function(app) {
     
     var newUser = new User({
       name: req.body.username,
-      password: password,
+      password: password
     });
     
 
@@ -168,7 +168,7 @@ module.exports = function(app) {
   app.get('/login', checkNotLogin);
   app.get('/login', function(req, res) {
     res.render('login', {
-      title: '用戶登入',
+      title: '用戶登入'
     });
   });
   
@@ -199,7 +199,7 @@ module.exports = function(app) {
 				var password = md5.update(req.body.password).digest('base64');
 				var newUser = new User({
 					name: req.body.username,
-					password: password,
+					password: password
 				});
 				req.session.user = newUser;
 				req.session.project = '*';
@@ -275,7 +275,7 @@ module.exports = function(app) {
 				}
 				res.render('user', {
 					title: user.name,
-					posts: posts,
+					posts: posts
 				});
 			});
 		});
@@ -365,7 +365,7 @@ module.exports = function(app) {
 			res.render('pposts', {
 				title: '所有评论',
 				pposts:posts,
-				pname:req.params.pname,
+				pname:req.params.pname
 			});
 
 		});
@@ -384,7 +384,7 @@ module.exports = function(app) {
 			res.render('pusers', {
 				title: '项目用户',
 				pusers:watches,
-				pname:req.params.pname,
+				pname:req.params.pname
 			});
 
 		});
@@ -395,7 +395,7 @@ module.exports = function(app) {
 		var t_image_path=null;
 		res.render('upload', {
 				title: '文件上传',
-				layout:"miniwindow",
+				layout:"miniwindow"
 				});
 	});
 
@@ -408,14 +408,14 @@ module.exports = function(app) {
 			if (err) {
 				 res.render('imclose',{
 						layout:'imcloselayout',
-						image_path:"ERROR",
+						image_path:"ERROR"
 				 });
 			} else {
 				fs.unlink(tmp_path, function() {
 					if (err) throw err;
 						res.render('imclose',{
 							layout:'imcloselayout',
-							image_path:t_target_path,
+							image_path:t_target_path
 					 });
 				});
 			}
@@ -663,7 +663,7 @@ function postErr() {
 		req.flash('error', '任务已经被删除');
 		return res.render('getPostPost',{
 			layout:'getPostPostLayout',
-			posts:posts,
+			posts:posts
 		});
 }
 
