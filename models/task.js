@@ -78,7 +78,7 @@ Task.prototype.save = function save(callback) {
     taskPrice: this.taskPrice,
     taskDays: this.taskDays,
 		taskWorker:this.taskWorker,
-		taskLevel:this.taskLevel,
+		taskLevel:this.taskLevel
   };
   mongodb.open(function(err, db) {
     if (err) {

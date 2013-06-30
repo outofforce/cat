@@ -37,7 +37,7 @@ Notify.prototype.save = function save(callback) {
 		notifyContext: this.notifyContext,
 		notifyStatus: this.notifyStatus,
     createTime: this.createTime,
-    updateTime: this.updateTime,
+    updateTime: this.updateTime
   };
 
   mongodb.open(function(err, db) {

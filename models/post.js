@@ -42,7 +42,7 @@ Post.prototype.save = function save(callback) {
 		pname: this.pname,
 		image: this.image,
 		sub_id: this.sub_id,
-    update: this.update,
+    update: this.update
   };
   mongodb.open(function(err, db) {
     if (err) {

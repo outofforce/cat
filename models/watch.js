@@ -16,7 +16,7 @@ Watch.prototype.save = function save(callback) {
   var watch = {
     user: this.user,
     pname: this.pname,
-    time: this.time,
+    time: this.time
   };
   mongodb.open(function(err, db) {
     if (err) {

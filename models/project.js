@@ -15,7 +15,7 @@ Project.prototype.save = function save(callback) {
   var project= {
     pname: this.pname,
     desc: this.desc,
-    time: this.time,
+    time: this.time
   };
   mongodb.open(function(err, db) {
     if (err) {
