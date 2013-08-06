@@ -1,6 +1,4 @@
-       <!-- Global Bootstrap settings
-        ================================================== -->
-	
+
 <!--
 			<form method="post" action="/post" class="well form-inline center" style="text-align:left;">
 						<input type="hidden" name ="post_project_name" id="post_project_name" value="*">
@@ -12,96 +10,91 @@
 							<input type="hidden" name ="uploadimagenameInput" id="uploadimagenameInput" value="*">
 							<div name ="uploadimagename" id="uploadimagename" style="display:none" group="1234">
 							</div>
-				</form>
+			</form>
 -->
         <div class="page-header">
-			  任务通知栏
+			  <b>任务通知栏</b>
         </div>
         <div class="span6">
 
 <% __INPUT.tasks.forEach(function(item, index) { %>
 
-<div class="row" >
+<div class="row" style="margin-bottom: 15px;">
+
+<div   style="padding: 0px;margin: 0px;border: 1px solid #ddd;">
 <% if (item.taskAttr == 'recieve' ) { %>
-					 <h4><%= item.taskWorker %> 认领了<%= item.taskOwner %> 的任务</h4>
-					<p>
+                    <div style="border: 0px ;padding: 0px;margin: 0px 0px 5px 0px;background:#eee;">
+					 <h5 style="border: 0px ;padding: 5px;margin: 0px;"><%= item.taskWorker %> 认领了<%= item.taskOwner %> 的任务  </h5>
+					 <div style="float:right;"><small><%= item.time_str %>更新<span class="icon-bar"></span></small></div>
+					</div>
+					<p style="padding: 5px 5px 5px 5px;">
 						<span class="icon-bar"></span>
-						<strong>任务:</strong>[<font class="text-info"> <%= item.taskName%></font>]  
+						任务:[<%= item.taskName%>]
 					</p>
 <% } else if (item.taskAttr == 'assign') { %>
-					<h4><%= item.taskOwner %> 派发任务给 <%= item.taskWorker%> </h4>
-					<p>
+					<div style="border: 0px ;padding: 0px;margin: 0px 0px 5px 0px;background:#eee;">
+                    	<h5 style="border: 0px ;padding: 5px;margin: 0px;"><%= item.taskOwner %> 派发任务给 <%= item.taskWorker%> </h5>
+                        <div style="float:right;"><small><%= item.time_str %>更新<span class="icon-bar"></span></small></div>
+                    </div>
+					<p style="padding: 5px 5px 5px 5px;">
 						<span class="icon-bar"></span>
-						<strong>任务:</strong>[<font class="text-info"> <%= item.taskName%></font>]  
+						任务:[ <%= item.taskName%> ]
 					</p>
 
 <% } else { %>
-					 <h4><%= item.taskOwner %> 发布任务了</h4>
-					<p>
+					<div style="border: 0px ;padding: 0px;margin: 0px 0px 5px 0px;background:#eee;">
+                            <h5 style="border: 0px ;padding: 5px;margin: 0px;"><%= item.taskOwner %> 发布任务了 </h5>
+                                                <div style="float:right;"><small><%= item.time_str %>更新<span class="icon-bar"></span></small></div>
+                    </div>
+					<p style="padding: 5px 5px 5px 5px;">
 						<span class="icon-bar"></span>
-						<strong>任务:</strong>[<font class="text-info"> <%= item.taskName%></font>]  <br>
+						任务:[ <%= item.taskName %> ]  <br>
 						<span class="icon-bar"></span>
-						<strong>描述:</strong> [<%= item.taskDesc %>]
-<% if (item.relaPname == '*') { %>
-<% } else { %>
+						描述:[ <%= item.taskDesc %> ]
+                         <% if (item.relaPname != '*') { %>
 						<span class="icon-bar"></span>
-						<a href="#"><span class="label label-warning"><%= item.relaPname %></span></a>
-<% } %>
+						<a href="/pDetail?project_id=<%= item.relaPname %>"><span class="label label-warning"><%= item.relaPname %></span></a>
+                          <% } %>
 
 					</p>
 
 <% if (item.img != "*") { %> 
-							<img src="<%= item.img %>" /> 
+					<img style="padding: 5px 5px 5px 5px;" src="<%= item.img %>" />
 <% } %>
 
+
+
+
+
 <% } %>
 
+                    <p class="text-right" style="border: 0px ;padding: 0px;margin: 1px 10px 1px 5px;">
+                    <small>
 
-<p></p>
-</div>
-			
-					
-<div class="row">
-					
-
-    <div class="tabbable" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;"> <!-- Only required for left/right tabs -->
-
-			<ul class="nav nav-tabs">
-				<li class="active"><a href="#tab1<%= item.id %>" data-toggle="tab">.....</a></li>
-				<li><a href="#tab2<%= item.id %>" onclick="javascript:getPostPostOK('<%= item.id %>');" data-toggle="tab">动态</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane active" id="tab1<%= item.id %>">
-						<ul class="nav">
-<% if (item.taskStatus == 'open' && item.taskAttr=='waitFor') { %>
-							<li class="btn btn-small"><a href="/recieveTask?task=<%= item.id%>"> 待认领 </a></li>
-<% } else if (item.taskStatus == 'finish') { %> 
-							<li class="btn btn-small"><a href="#"> 已完成</a></li>
-<% } %>
-						</ul>
-				</div>
-
-				<div class="tab-pane" id="tab2<%= item.id %>">
-					<div class="span6 ">
-						<div class="form-search">
-							<input onkeyup="javascript:getPostKey(event,'<%= item.id %>');" type="text" class="span5" name="postpostTxt<%= item.id %>">
-							<button onclick="javascript:getPostPostOK('<%= item.id %>');" type="button" class="btn">发表</button> 
-						</div>
-						<div id="postpostcontext<%= item.id %>" name="postpostcontext">
-							
-						</div>
-					</div>
-				</div>
-			</div>
-    </div>
+                                                                    <% if (item.taskStatus == 'open' && item.taskAttr=='waitFor') { %>
+                    <a href="/recieveTask?task=<%= item.id%>" class="text-warning" >认领</a>
+                    <span class="icon-bar" style="text-align: center;">|</span>
+                                                                    <% } else if (item.taskStatus == 'finish') { %>
+                    <a href="#" class="text-success" >完成</a>
+                    <span class="icon-bar" style="text-align: center;">|</span>
+                                                                    <% } %>
 
 
+                    <a href="#">动态(9)</a>
+                    <span class="icon-bar" style="text-align: center;">|</span>
+                    <a href="/taskDetail?task=<%= item.id%>">详细</a>
+                    </small>
+                    </p>
 
 </div>
 
+</div>
 
 <%}) %>
 
 
-			</div>
+
+
+
+</div>
 

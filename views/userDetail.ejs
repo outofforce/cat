@@ -1,0 +1,37 @@
+        <div class="page-header">
+					<b>任务详情</b>
+        </div>
+        <div class="span6">
+					<div class="row-fluid">
+						<div class="span4" style="background:#eee;">
+							状态：<%= __INPUT.task.taskStatus %>
+						</div>
+						<div class="span4" style="background:#eee;">
+							一共有<%= __INPUT.posts.length %>次动态
+						</div>
+						<div class="span4" style="background:#eee;">
+							一共有<%= __INPUT.subtasks.length %>个子任务
+						</div>
+					</div>
+					<div class="row-fluid">
+						<br>
+					</div>
+					<div class="row-fluid">
+						<p>创建者:<%= __INPUT.task.taskOwner%></p>
+						<p>名称:<%= __INPUT.task.taskName %></p>
+						<p>描述:<%= __INPUT.task.taskDesc%></p>
+						<p>可获得的积分:<%= __INPUT.task.taskPrice %></p>
+						<p>创建时间:<%= __INPUT.task.createTime %></p>
+						<p>最近更新时间:<%= __INPUT.task.time_str %></p>
+					</div>
+					<div class="row-fluid"> <a type="button" class="btn btn-warning"> 关闭 </a>
+						  <a type="button" class="btn btn-success"> 完成 </a>
+					</div>
+
+					<div class="row-fluid">
+						<br>
+						<br>
+					</div>
+
+				</div>
+

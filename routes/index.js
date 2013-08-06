@@ -59,8 +59,8 @@ module.exports = function(app) {
 
 			 });
 		 } else if (tmtype =='tcontext') {
-
-				Task.get(null, function(err, tasks) {
+        var query ={}
+				Task.getByQuery(query, function(err, tasks) {
 					if (err) {
 						tasks= [];
 					}
@@ -436,6 +436,86 @@ module.exports = function(app) {
 	app.get('/recieveTask', checkLogin);
 	app.get('/recieveTask', recieveTask);
 
+	app.get('/taskDetail', checkLogin);
+	app.get('/taskDetail', getTasks);
+	app.get('/taskDetail', function(req,res){
+
+		getTaskDetail(req,function(err,task,posts){
+			if (err) {
+				req.flash('error', err);
+				res.redirect('/m/tcontext');
+			}
+
+		getSubTaskDetail(req,function(err,subtasks){
+			if (err) {
+				req.flash('error', err);
+				res.redirect('/m/tcontext');
+			}
+
+			var __INPUT=[];
+			__INPUT.rightArgs=[];
+			__INPUT.leftArgs=req.body.__leftArgs;
+			__INPUT.task=task;
+			__INPUT.posts=posts;
+			__INPUT.subtasks=subtasks;
+			__INPUT.title='任务详情';
+
+
+			res.render('taskDetail', {
+				__INPUT :__INPUT
+			});
+
+		});
+
+		});
+
+	});
+
+	app.get('/pDetail', checkLogin);
+	app.get('/pDetail', getProject);
+	app.get('/pDetail', function(req,res){
+
+		if (req.body.__project == null) {
+        req.flash('error', '没有这个项目');
+        return res.redirect('/');
+		}
+
+    tproject = req.body.__project ;
+
+
+
+		getTaskDetail(req,function(err,task,posts){
+			if (err) {
+				req.flash('error', err);
+				res.redirect('/m/tcontext');
+			}
+
+		getSubTaskDetail(req,function(err,subtasks){
+			if (err) {
+				req.flash('error', err);
+				res.redirect('/m/tcontext');
+			}
+
+			var __INPUT=[];
+			__INPUT.rightArgs=[];
+			__INPUT.leftArgs=req.body.__leftArgs;
+			__INPUT.task=task;
+			__INPUT.posts=posts;
+			__INPUT.subtasks=subtasks;
+			__INPUT.title='任务详情';
+
+
+			res.render('taskDetail', {
+				__INPUT :__INPUT
+			});
+
+		});
+
+		});
+
+	});
+
+
 
 
 
@@ -626,7 +706,7 @@ function getTasks(req, res, next) {
 			query.taskOwner = req.session.user.name;
 			query.assigners = null;
 		} else {
-			query.taskOwner = req.session.user.name;
+			query.taskWorker= req.session.user.name;
 		}
 
 		Task.getByQuery(
@@ -636,6 +716,24 @@ function getTasks(req, res, next) {
 			 	next();
 		});
 }
+
+function getProjectTasks(project_name, callback ) {
+  query={};
+  if (project_name != null) {
+    query.relaPname = project_name;
+  } else {
+    callback('项目名称不能为空');
+  }
+
+  Task.getByQuery(
+    query,
+    function(err, tasks) {
+      if (err)
+        callback(err);
+      callback(null,tasks);
+    });
+}
+
 
 function genPostNotify(newpost,callback) {
 			var notify = new Notify(
@@ -730,3 +828,45 @@ function genNewPost(posttxt,who,task_id,callback) {
 		});
 
 }
+
+function getTaskDetail(req,callback) {
+
+	var task_id = req.query.task;
+	
+	Task.getById(task_id,function(err,task) {
+		if (err) {
+			return callback(err);
+		}
+
+		Post.getSubPost(task_id,function(err,posts) {
+			if (err) { 
+				return callback(err);
+			}
+			return callback(null,task,posts);
+		});
+
+	});
+
+}
+
+function getSubTaskDetail(req,callback) {
+	var task_id = req.query.task;
+	var query = {};
+	query.assigners=task_id;
+	Task.getByQuery(query,function(err,subtasks) {
+		if (err) {
+			return callback(err);
+		}
+		return callback(null,subtasks);
+	});
+}
+
+function getProject(req, res, next) {
+	  Project.get(req.query.project_id,function(err,projects){
+			if (projects.length>0) {
+				req.body.__project=projects[0];
+				next();
+			} 
+		});
+}
+

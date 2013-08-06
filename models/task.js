@@ -1,5 +1,6 @@
 var mongodb = require('./db');
 var ObjectID= require('mongodb').ObjectID;
+var myutil= require('./catutil.js');
 
 function Task(taskWorker,taskLevel,taskOwner,taskName,taskDesc,taskAttr,taskStatus,relaPname,assigners,img,createTime,updateTime,taskDays,taskPrice,id) {
 
@@ -174,59 +175,10 @@ Task.getById= function getById(id, callback) {
 								doc.taskDays,
 								doc.taskPrice,
 								doc._id);
+        task.time_str = myutil.stringToDateTime(doc.updateTime);
         callback(null, task);
       });
 		});
-  });
-};
-
-Task.get = function get(username, callback) {
-  mongodb.open(function(err, db) {
-    if (err) {
-      return callback(err);
-    }
-
-    db.collection('tasks', function(err, collection) {
-      if (err) {
-        mongodb.close();
-        return callback(err);
-      }
-
-      var query = {};
-      if (username) {
-					query.taskOwner = username;
-      }
-
-      collection.find(query).sort({updateTime: -1}).limit(20).toArray(function(err, docs) {
-        mongodb.close();
-        if (err) {
-          callback(err, null);
-        }
-
-        var tasks= [];
-        docs.forEach(function(doc, index) {
-
-          var task = new Task(
-								doc.taskWorker,
-								doc.taskLevel,
-								doc.taskOwner,
-								doc.taskName,
-								doc.taskDesc,
-								doc.taskAttr,
-								doc.taskStatus,
-								doc.relaPname,
-								doc.assigners,
-								doc.img,
-								doc.createTime,
-								doc.updateTime,
-								doc.taskDays,
-								doc.taskPrice,
-								doc._id);
-          tasks.push(task);
-        });
-        callback(null, tasks);
-      });
-    });
   });
 };
 
@@ -269,6 +221,7 @@ Task.getByQuery = function getByQuery(query,callback) {
 								doc.taskDays,
 								doc.taskPrice,
 								doc._id);
+          task.time_str = myutil.stringToDateTime(doc.updateTime);
           tasks.push(task);
         });
         callback(null, tasks);

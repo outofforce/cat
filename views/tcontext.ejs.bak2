@@ -105,3 +105,43 @@
 
 			</div>
 
+                    <!--
+
+                    <div class="row">
+
+
+                        <div class="tabbable" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;"> <!-- Only required for left/right tabs -->
+
+                    			<ul class="nav nav-tabs">
+                    				<li class="active"><a href="#tab1<%= item.id %>" data-toggle="tab">.....</a></li>
+                    				<li><a href="#tab2<%= item.id %>" onclick="javascript:getPostPostOK('<%= item.id %>');" data-toggle="tab"><small>动态</small></a></li>
+                    			</ul>
+                    			<div class="tab-content">
+                    				<div class="tab-pane active" id="tab1<%= item.id %>">
+                    						<ul class="nav">
+                                                <% if (item.taskStatus == 'open' && item.taskAttr=='waitFor') { %>
+                    							<li class="btn btn-small"><a href="/recieveTask?task=<%= item.id%>"> 待认领 </a></li>
+                                                <% } else if (item.taskStatus == 'finish') { %>
+                    							<li class="btn btn-small"><a href="#"> 已完成</a></li>
+                                                <% } %>
+                    						</ul>
+                    				</div>
+
+                    				<div class="tab-pane" id="tab2<%= item.id %>">
+                    					<div class="span6 ">
+                    						<div class="form-search">
+                    							<input onkeyup="javascript:getPostKey(event,'<%= item.id %>');" type="text" class="span5" name="postpostTxt<%= item.id %>">
+                    							<button onclick="javascript:getPostPostOK('<%= item.id %>');" type="button" class="btn">发表</button>
+                    						</div>
+                    						<div id="postpostcontext<%= item.id %>" name="postpostcontext">
+
+                    						</div>
+                    					</div>
+                    				</div>
+                    			</div>
+                        </div>
+
+
+                    </div>
+
+                    -->

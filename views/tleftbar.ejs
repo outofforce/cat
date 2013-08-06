@@ -1,23 +1,49 @@
 <div class="row" style="border-right: 1px solid rgb(238, 238, 238);">
 <div class="page-header" >
-我的任务 
+<b>我的任务</b>
 </div>
 
 <% items.forEach(function(item, index) { %>
 
-
-<div  style="margin: 0px 10px 20px; border-bottom: 1px solid rgb(238, 238, 238); ">
-<p ><span class="label label-default"><small>
-<% if (item.relaPname=="*") { %>
-默认
+<div  style="margin: 0px 0px 0px 0px; border-bottom: 1px solid rgb(238, 238, 238); ">
+<%  if (user.name != item.taskOwner) { %>
+<p style="padding: 3px ;margin: 0px 10px 0px 0px;border-left: 5px solid #51a351;">
 <% } else { %>
-<%= item.relaPname %>
+<p style="padding: 3px ;margin: 0px 10px 0px 0px;border-left: 5px solid #faa732;">
 <% } %>
-</small></span> <span class="label label-info"><small><%= item.taskOwner %></small></span> </p>
-<label class="checkbox">
-  <input type="checkbox" value="">
-	<%= item.taskName %>
-</label>
+
+<% if (item.relaPname != "*") { %>
+<a href="/pDetail?project_id=<%= item.relaPname %>">
+     <span class="label label-info">
+        <small>
+							<%= item.relaPname %>
+        </small>
+     </span>
+</a>
+<% } %>
+
+<%  if (user.name != item.taskOwner) { %>
+<a href="/userDetail?username=<%= item.taskOwner %>">
+    <span class="label label-default">
+        <small>
+        创建者 <%= item.taskOwner %>
+        </small>
+    </span>
+</a>
+<% } else { %>
+    <span class="label label-default">
+        <small>
+					自己
+        </small>
+    </span>
+<% } %>
+    <br>
+    <span class="icon-bar" style="text-align: center;">|</span><a href="/taskDetail?task=<%= item.id%>"><small><%= item.taskName %></small></a>
+</p>
+
+
+
+
 </div>
 
 <% }) %>
